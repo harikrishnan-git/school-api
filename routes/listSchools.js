@@ -15,7 +15,7 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// ✅ Middleware: Validate latitude and longitude
+// Middleware: Validate latitude and longitude
 const validateCoordinates = [
   query("latitude")
     .exists()
