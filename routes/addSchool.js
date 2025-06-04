@@ -15,12 +15,22 @@ router.post(
   ],
   async (req, res) => {
     const { name, address, latitude, longitude } = req.body;
-    const errors = validationResult(req.body);
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     try {
+      // Check for duplicate entry
+      const [existing] = await db.query(
+        `SELECT * FROM schools WHERE name = ? AND address = ? AND latitude = ? AND longitude = ?`,
+        [name, address, latitude, longitude]
+      );
+
+      if (existing.length > 0) {
+        return res.status(409).json({ error: "School already exists" });
+      }
+
       const [result] = await db.query(
         `INSERT INTO schools (name, address, latitude, longitude) VALUES (?, ?, ?, ?)`,
         [name, address, latitude, longitude]
